@@ -13,6 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DB,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      autoLoadEntities: true,
       synchronize: true,
     }),
     ItemsModule, 

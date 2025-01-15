@@ -1,18 +1,20 @@
-FROM node:16
+# Use the Node.js 16 base image
+FROM node:latest
 
-# Create app directory
+# Set the working directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
+# Install dependencies
 RUN npm install
 
-# Bundle app source
+# Copy the application source code
 COPY . .
 
-RUN npm run build
-
+# Expose the application port
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+# Command for starting the app in development mode
+CMD ["npm", "run", "start:dev"]

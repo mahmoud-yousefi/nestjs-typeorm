@@ -15,8 +15,20 @@ services:
     networks:
       - backend
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: mufimf14@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: mufimf14
+    ports:
+      - "5050:80"
+    restart: always
+    networks:
+      - backend
+
   nest_app:
-    build: .
+    image: typeorm:v1.0.0
     container_name: nest_app
     depends_on:
       - postgres_db
@@ -27,8 +39,13 @@ services:
       PG_USER: postgres
       PG_PASSWORD: postgres
       PG_DB: postgres
+      NODE_ENV: development
     ports:
       - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: ["npm", "run", "start:dev"]
     networks:
       - backend
 
