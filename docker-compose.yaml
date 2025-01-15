@@ -1,7 +1,41 @@
+version: '3.8'
+
 services:
-  postgres:
-    image: postgres
-    env_file:
-      - .env
+  postgres_db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
-      - '5432:5432'
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  nest_app:
+    build: .
+    container_name: nest_app
+    depends_on:
+      - postgres_db
+    environment:
+      DB_TYPE: postgres
+      PG_HOST: postgres_db
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DB: postgres
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
