@@ -1,3 +1,5 @@
 video: 39:00
 
 npm run typeorm:create-migration --name=PublicItems
+
+npm run typeorm:run-migrations
