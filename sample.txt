@@ -1,1 +1,3 @@
 video: 39:00
+
+npm run typeorm:create-migration --name=PublicItems
