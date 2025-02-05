@@ -1,26 +1,51 @@
 import { Injectable } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
+import { Item } from './entities/item.entity';
+import { EntityManager, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Listing } from './entities/listing.entity';
 
 @Injectable()
 export class ItemsService {
-  create(createItemDto: CreateItemDto) {
-    return 'This action adds a new item';
+  constructor(
+    @InjectRepository(Item)
+    private readonly itemRepository: Repository<Item>,
+    private readonly entityManager: EntityManager
+  ) { }
+
+  async create(createItemDto: CreateItemDto) {
+    const listing = new Listing({
+      ...createItemDto.listing,
+      rating: 0,
+    })
+    const item = new Item({
+      ...createItemDto,
+      comments: [],
+      listing,
+    });
+    return await this.entityManager.save(item);
   }
 
   findAll() {
-    return `This action returns all items`;
+    return this.itemRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
+  async findOne(id: number) {
+    // this.itemRepository.findOneBy({id});
+    return this.itemRepository.findOne({ 
+      where: {id},
+      relations: {listing: true, comments: true}
+     });
   }
 
-  update(id: number, updateItemDto: UpdateItemDto) {
-    return `This action updates a #${id} item`;
+  async update(id: number, updateItemDto: UpdateItemDto) {
+    const item = await this.itemRepository.findOneBy({id});
+    item.public = updateItemDto.public;
+    return await this.itemRepository.save(item);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} item`;
+  async remove(id: number) {
+    await this.itemRepository.delete(id);
   }
 }

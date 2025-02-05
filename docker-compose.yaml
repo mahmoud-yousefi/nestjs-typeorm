@@ -28,6 +28,7 @@ services:
       - backend
 
   nest_app:
+    build: .
     image: typeorm:v1.0.0
     container_name: nest_app
     depends_on:
